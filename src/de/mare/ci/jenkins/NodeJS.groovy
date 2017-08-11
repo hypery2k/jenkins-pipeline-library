@@ -43,7 +43,13 @@ def nvmNode(command, opts = null) {
 def publishSnapshot(directory, buildNumber, name) {
     dir(directory) {
         // get current package version
-        def currentVersion = sh(returnStdout: true, script: "npm version | grep \"{\" | tr -s ':' | tr '_' '-' | tr '/' '-' | cut -d \"'\" -f 4").trim()
+        def currentVersion
+        def os = System.getProperty("os.name").toLowerCase()
+        if ((OS.indexOf("mac") >= 0) {
+          currentVersion = sh(returnStdout: true, script: "npm version | grep \"{\" | tr -s ':' | tr '_' '-' | tr '/' '-' | cut -d \"'\" -f 4").trim()
+        } else {
+          currentVersion = sh(returnStdout: true, script: "npm version | grep \"{\" | tr -s ':' | tr '_' '-' | tr '/' '-' | cut -d \"'\" -f 2").trim()          
+        }
         // add build number for maven-like snapshot
         def newVersion = "${currentVersion}-dev-${buildNumber}"
         // publish snapshot to NPM
