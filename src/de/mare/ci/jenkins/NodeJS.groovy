@@ -1,8 +1,6 @@
 #!/usr/bin/groovy
 package de.mare.ci.jenkins
 
-import groovy.json.JsonSlurper
-
 def nvm(runTarget, opts = null) {
     def prefix = ""
     if (opts != null) {
@@ -42,14 +40,23 @@ def nvmNode(command, opts = null) {
     """
 }
 
+@NonCPS
+def readJson(text) {
+    def response = new groovy.json.JsonSlurperClassic().parseText(text)
+    jsonSlurper = null
+    echo "response:$response"
+    return response
+}
+
 def publishSnapshot(directory, buildNumber, name) {
     dir(directory) {
         // get current package version
-        def packageSlurper = new JsonSlurper()
-        def packageJson = packageSlurper.parse file('package.json')
+        def packageJsonText = readFile encoding: 'UTF-8', file: 'package.json'
+        def packageJson = readJson(packageJsonText)
         def currentVersion = packageJson.version
         // add build number for maven-like snapshot
-        def newVersion = "${currentVersion}-${name}-${buildNumber}"
+        def prefix = name.replaceAll('/','-').replaceAll('_','-')
+        def newVersion = "${currentVersion}-${prefix}-${buildNumber}"
         // publish snapshot to NPM
         sh "npm version ${newVersion} --no-git-tag-version && npm publish --tag next"
     }
