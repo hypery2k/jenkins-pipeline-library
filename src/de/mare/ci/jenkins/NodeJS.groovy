@@ -1,5 +1,7 @@
 #!/usr/bin/groovy
-package de.mare.ci.jenkins;
+package de.mare.ci.jenkins
+
+import groovy.json.JsonSlurper
 
 def nvm(runTarget, opts = null) {
     def prefix = ""
@@ -43,15 +45,11 @@ def nvmNode(command, opts = null) {
 def publishSnapshot(directory, buildNumber, name) {
     dir(directory) {
         // get current package version
-        def currentVersion
-        def os = System.getProperty("os.name").toLowerCase()
-        if (os.indexOf("mac") >= 0) {
-          currentVersion = sh(returnStdout: true, script: "npm version | grep \"{\" | tr -s ':' | tr '_' '-' | tr '/' '-' | cut -d \"'\" -f 4").trim()
-        } else {
-          currentVersion = sh(returnStdout: true, script: "npm version | grep \"{\" | tr -s ':' | tr '_' '-' | tr '/' '-' | cut -d \"'\" -f 2").trim()
-        }
+        def packageSlurper = new JsonSlurper()
+        def packageJson = packageSlurper.parse file('package.json')
+        def currentVersion = packageJson.version
         // add build number for maven-like snapshot
-        def newVersion = "${currentVersion}-dev-${buildNumber}"
+        def newVersion = "${currentVersion}-${name}-${buildNumber}"
         // publish snapshot to NPM
         sh "npm version ${newVersion} --no-git-tag-version && npm publish --tag next"
     }
