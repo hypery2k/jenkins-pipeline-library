@@ -45,7 +45,7 @@ def publishSnapshot(directory, buildNumber, name) {
         // get current package version
         def currentVersion
         def os = System.getProperty("os.name").toLowerCase()
-        if (OS.indexOf("mac") >= 0) {
+        if (os.indexOf("mac") >= 0) {
           currentVersion = sh(returnStdout: true, script: "npm version | grep \"{\" | tr -s ':' | tr '_' '-' | tr '/' '-' | cut -d \"'\" -f 4").trim()
         } else {
           currentVersion = sh(returnStdout: true, script: "npm version | grep \"{\" | tr -s ':' | tr '_' '-' | tr '/' '-' | cut -d \"'\" -f 2").trim()
