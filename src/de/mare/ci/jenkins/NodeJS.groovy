@@ -55,7 +55,7 @@ def publishSnapshot(directory, buildNumber, name) {
         def packageJson = readJson(packageJsonText)
         def currentVersion = packageJson.version
         // add build number for maven-like snapshot
-        def prefix = name.replaceAll('/','-').replaceAll('_','-').replaceAll('@','_')
+        def prefix = name.replaceAll('/','-').replaceAll('_','-').replaceAll('@','')
         def newVersion = "${currentVersion}-${prefix}-${buildNumber}"
         // publish snapshot to NPM
         sh "npm version ${newVersion} --no-git-tag-version && npm publish --tag next"
