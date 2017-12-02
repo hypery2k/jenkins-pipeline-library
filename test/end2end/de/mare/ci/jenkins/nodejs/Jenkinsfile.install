@@ -1,0 +1,7 @@
+def nodeJS = load "./src/de/mare/ci/jenkins/NodeJS.groovy"
+
+def execute() {
+    stage('Prepare') {
+        nodeJS.nvm('install')
+    }
+}

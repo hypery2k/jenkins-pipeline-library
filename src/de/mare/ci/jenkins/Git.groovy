@@ -16,3 +16,5 @@ def isSupportBranch() {
 def isFeatureBranch() {
     env.BRANCH_NAME.startsWith('feature')
 }
+
+return this;
