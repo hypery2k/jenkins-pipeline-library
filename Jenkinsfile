@@ -21,7 +21,7 @@ timeout(10) {
                 }
 
                 stage('Build') {
-                    sh "mvn clean install -DskipTests=true -DskipITs=true ${mvnOpts}"
+                    sh "mvn clean install -DskipTests=true -DskipITs=true"
                     openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', high: 'FIXME', low: '', normal: 'TODO', pattern: '*/src/**/*', unHealthy: ''
                 }
 

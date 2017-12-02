@@ -37,10 +37,22 @@
         <system>GitHub</system>
         <url>https://github.com/hypery2k/jenkins-pipeline-library/issues</url>
     </issueManagement>
+    
     <ciManagement>
         <system>Travis</system>
         <url>https://travis-ci.org/pdsoftplan/jenkins-pipeline-library</url>
     </ciManagement>
+
+    <repositories>
+      <repository>
+        <id>repo.jenkins-ci.org</id>
+        <url>https://repo.jenkins-ci.org/public/</url>
+      </repository>
+      <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+      </repository>
+    </repositories>
 
     <distributionManagement>
         <snapshotRepository>

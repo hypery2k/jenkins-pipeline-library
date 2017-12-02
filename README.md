@@ -1,5 +1,8 @@
 # Jenkins Pipeline Library
 
+[![Build Status](https://travis-ci.org/hypery2k/jenkins-pipeline-library.svg?branch=master)](https://travis-ci.org/hypery2k/jenkins-pipeline-library)
+[![Build Status](https://martinreinhardt-online.de/jenkins/buildStatus/icon?job=OSS/jenkins-pipeline-library/master)](https://martinreinhardt-online.de/jenkins/blue/organizations/jenkins/OSS%2Fjenkins-pipeline-library/branches/)
+
 ## Why
 
 An Shared Library is defined with a name, a source code retrieval method such as by SCM, and optionally a default version. The name should be a short identifier as it will be used in scripts.
