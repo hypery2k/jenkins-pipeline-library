@@ -6,12 +6,11 @@ def nvm(runTarget, opts = null) {
     if (opts != null) {
         prefix = opts + " "
     }
-    sh """#!/bin/bash -e
+   sh """#!/bin/bash -e
         NVM_DIR=
         source ~/.nvm/nvm.sh
-        nvm use
-        ${prefix}npm ${runTarget}
-    """
+        nvm install
+        ${prefix}npm ${runTarget}"""
 }
 
 def nvmRun(runTarget, opts = null) {
@@ -22,9 +21,8 @@ def nvmRun(runTarget, opts = null) {
     sh """#!/bin/bash -e
         NVM_DIR=
         source ~/.nvm/nvm.sh
-        nvm use
-        ${prefix}npm run ${runTarget}
-    """
+        nvm install
+        ${prefix}npm run ${runTarget}"""
 }
 
 def nvmNode(command, opts = null) {
@@ -36,11 +34,9 @@ def nvmNode(command, opts = null) {
         NVM_DIR=
         source ~/.nvm/nvm.sh
         nvm use
-        ${prefix}node ${command}
-    """
+        ${prefix}node ${command}"""
 }
 
-@NonCPS
 def readJson(text) {
     def response = new groovy.json.JsonSlurperClassic().parseText(text)
     jsonSlurper = null
@@ -48,17 +44,25 @@ def readJson(text) {
     return response
 }
 
+def getVersionFromPackageJSON() {
+    dir(".") {
+        def packageJson = readJSON file: 'package.json'
+        return packageJson.version
+    }
+}
+
 def publishSnapshot(directory, buildNumber, name) {
     dir(directory) {
         // get current package version
-        def packageJsonText = readFile encoding: 'UTF-8', file: 'package.json'
-        def packageJson = readJson(packageJsonText)
-        def currentVersion = packageJson.version
+        def currentVersion = getVersionFromPackageJSON()
         // add build number for maven-like snapshot
         def prefix = name.replaceAll('/','-').replaceAll('_','-').replaceAll('@','')
         def newVersion = "${currentVersion}-${prefix}-${buildNumber}"
         // publish snapshot to NPM
-        sh "npm version ${newVersion} --no-git-tag-version && npm publish --tag next"
+        sh """#!/bin/bash -e
+            NVM_DIR=
+            source ~/.nvm/nvm.sh
+            npm version ${newVersion} --no-git-tag-version && npm publish --tag next"""
     }
 }
 
