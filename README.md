@@ -6,6 +6,11 @@ An Shared Library is defined with a name, a source code retrieval method such as
 
 The version could be anything understood by that SCM; for example, branches, tags, and commit hashes all work for Git. You may also declare whether scripts need to explicitly request that library (detailed below), or if it is present by default. Furthermore, if you specify a version in Jenkins configuration, you can block scripts from selecting a different version.
 
+## Requirements
+
+* [Jenkins Pipeline Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Plugin)
+* [Jenkins Pipeline Utility Steps](https://github.com/jenkinsci/pipeline-utility-steps-plugin)
+
 
 ## Usage
 
