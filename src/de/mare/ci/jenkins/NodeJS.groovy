@@ -1,53 +1,39 @@
 #!/usr/bin/groovy
 package de.mare.ci.jenkins
 
-def nvm(runTarget, opts = null) {
+def initNvmShellCommand(prefix, command, suffix) {
+    sh """#!/bin/bash
+        NVM_DIR=
+        source ~/.nvm/nvm.sh
+        nvm install
+        ${prefix} ${command} ${suffix}"""
+}
+
+def nvmWithOpts(opts, command, suffix) {
     def prefix = ""
     if (opts != null) {
         prefix = opts + " "
     }
-   sh """#!/bin/bash -e
-        NVM_DIR=
-        source ~/.nvm/nvm.sh
-        nvm install
-        ${prefix}npm ${runTarget}"""
+    initNvmShellCommand(prefix, command, suffix)
+}
+
+def nvm(target, opts = null) {
+    nvmWithOpts(opts, "npm", target)
 }
 
 def nvmRun(runTarget, opts = null) {
-    def prefix = ""
-    if (opts != null) {
-        prefix = opts + " "
-    }
-    sh """#!/bin/bash -e
-        NVM_DIR=
-        source ~/.nvm/nvm.sh
-        nvm install
-        ${prefix}npm run ${runTarget}"""
+    nvmWithOpts(opts, "npm run", runTarget)
 }
 
-def nvmNode(command, opts = null) {
-    def prefix = ""
-    if (opts != null) {
-        prefix = opts + " "
-    }
-    sh """#!/bin/bash -e
-        NVM_DIR=
-        source ~/.nvm/nvm.sh
-        nvm use
-        ${prefix}node ${command}"""
+def nvmNode(nodeCommand, opts = null) {
+    nvmWithOpts(opts, "node", nodeCommand)
 }
 
 def readJson(text) {
-    try {
-        def response = new groovy.json.JsonSlurperClassic().parseText(text)
-        jsonSlurper = null
-        echo "response:$response"
-        return response
-    } catch (e) {
-        // try to read as file
-        def json = readJSON file: text
-        return json
-    }
+    def response = new groovy.json.JsonSlurperClassic().parseText(text)
+    jsonSlurper = null
+    echo "response:$response"
+    return response
 }
 
 def getVersionFromPackageJSON() {
@@ -62,13 +48,17 @@ def publishSnapshot(directory, buildNumber, name) {
         // get current package version
         def currentVersion = getVersionFromPackageJSON()
         // add build number for maven-like snapshot
-        def prefix = name.replaceAll('/','-').replaceAll('_','-').replaceAll('@','')
+        def prefix = name.replaceAll('/', '-').replaceAll('_', '-').replaceAll('@', '')
         def newVersion = "${currentVersion}-${prefix}-${buildNumber}"
         // publish snapshot to NPM
-        sh """#!/bin/bash -e
-            NVM_DIR=
-            source ~/.nvm/nvm.sh
-            npm version ${newVersion} --no-git-tag-version && npm publish --tag next"""
+        nvmWithOpts(null, "npm", "version ${newVersion} --no-git-tag-version && npm publish --tag next")
+    }
+}
+
+def publish(directory) {
+    dir(directory) {
+        // publish release to NPM
+        nvmWithOpts(null, "npm", "publish")
     }
 }
 
